@@ -1,0 +1,37 @@
+<!-- chat/templates/index.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Chat</title>
+</head>
+<body>
+    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+    <input id="chat-message" type="text" size="100"><br>
+    <button id="chat-send">Send</button>
+
+    <script>
+       var chatSocket = new WebSocket(
+    'ws://' + window.location.host + '/ws/chat/'
+);
+console.log("called");
+console.log(chatSocket);
+
+
+        chatSocket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            var message = data['message'];
+            document.querySelector('#chat-log').value += (message + '\n');
+        };
+
+        document.querySelector('#chat-send').onclick = function(e) {
+            var messageInputDom = document.querySelector('#chat-message');
+            var message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        };
+    </script>
+</body>
+</html>
